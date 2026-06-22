@@ -1,0 +1,144 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Material Challenge Game</title>
+
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: #eef2f7;
+  margin: 0;
+  padding: 20px;
+  text-align: center;
+}
+
+h1 { margin-bottom: 5px; }
+.subtitle { color: #555; margin-bottom: 20px; }
+
+.container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+}
+
+.card {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  width: 320px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+}
+
+.challenge { font-size: 20px; margin: 10px 0; }
+
+button {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 6px;
+  background: #2563eb;
+  color: white;
+  cursor: pointer;
+}
+
+button:hover { background: #1d4ed8; }
+
+.wordbank { text-align: left; }
+.wordbank label { display: block; margin: 4px 0; cursor: pointer; }
+
+.score { margin-top: 10px; font-weight: bold; text-align: center; }
+
+</style>
+</head>
+
+<body>
+
+<h1>Material Challenge Game</h1>
+<p class="subtitle">Use correct academic vocabulary to justify your decision</p>
+
+<div class="container">
+
+<div class="card">
+<h3>Challenge</h3>
+<div class="challenge"><b id="item">?</b></div>
+<div>made from</div>
+<div class="challenge"><b id="material">?</b></div>
+<button onclick="generate()">Generate</button>
+</div>
+
+<div class="card">
+<h3>Your Task</h3>
+<ul style="text-align:left">
+<li>Explain advantages and disadvantages</li>
+<li>Use academic vocabulary</li>
+<li>Link to user experience</li>
+<li>Explain if it is fit-for-purpose</li>
+</ul>
+</div>
+
+<div class="card wordbank">
+<h3>Academic Word Bank</h3>
+
+<!-- Core -->
+<label><input type="checkbox" onclick="updateScore()"> Appearance</label>
+<label><input type="checkbox" onclick="updateScore()"> Performance</label>
+<label><input type="checkbox" onclick="updateScore()"> Function</label>
+<label><input type="checkbox" onclick="updateScore()"> Fit-for-purpose</label>
+<label><input type="checkbox" onclick="updateScore()"> User experience</label>
+<label><input type="checkbox" onclick="updateScore()"> Safety</label>
+
+<!-- Extended -->
+<label><input type="checkbox" onclick="updateScore()"> Durability</label>
+<label><input type="checkbox" onclick="updateScore()"> Stability</label>
+<label><input type="checkbox" onclick="updateScore()"> Strength</label>
+<label><input type="checkbox" onclick="updateScore()"> Flexibility</label>
+<label><input type="checkbox" onclick="updateScore()"> Rigidity</label>
+<label><input type="checkbox" onclick="updateScore()"> Weight</label>
+<label><input type="checkbox" onclick="updateScore()"> Load-bearing</label>
+<label><input type="checkbox" onclick="updateScore()"> Structural integrity</label>
+<label><input type="checkbox" onclick="updateScore()"> Comfort</label>
+<label><input type="checkbox" onclick="updateScore()"> Ergonomics</label>
+<label><input type="checkbox" onclick="updateScore()"> Reliability</label>
+<label><input type="checkbox" onclick="updateScore()"> Efficiency</label>
+<label><input type="checkbox" onclick="updateScore()"> Suitability</label>
+<label><input type="checkbox" onclick="updateScore()"> Sustainability</label>
+<label><input type="checkbox" onclick="updateScore()"> Environmental impact</label>
+<label><input type="checkbox" onclick="updateScore()"> Cost-effectiveness</label>
+<label><input type="checkbox" onclick="updateScore()"> Manufacturing</label>
+<label><input type="checkbox" onclick="updateScore()"> Material properties</label>
+
+<div class="score">Score: <span id="score">0</span></div>
+</div>
+
+</div>
+
+<script>
+const materials=["Glass","Jelly","Cardboard","Steel","Fabric","Ice","Rubber","Concrete","Plastic","Wood","Foam","Paper"];
+const items=["Foldable Stool","Chair","Backpack","Umbrella","Ladder","Table","Helmet","Bridge","Door","Shelf","Tent","Shoe","Wheelchair","Skateboard","Bike Frame","Bed","Camping Stove","Water Bottle","Phone Case","Playground Slide","Treehouse","Dining Table","Office Desk","Step Stool","Garden Bench","Surfboard","Kayak","Toolbox","Bookshelf","Dog Kennel","Chicken Coop","Footstool","Picnic Table","Wheelbarrow","Suitcase","Headphones","Raincoat","Climbing Wall","Crate","Storage Box","Lamp Stand"];
+
+function generate(){
+  const mat=materials[Math.floor(Math.random()*materials.length)];
+  const itm=items[Math.floor(Math.random()*items.length)];
+
+  document.getElementById('material').textContent=mat;
+  document.getElementById('item').textContent=itm;
+
+  const boxes=document.querySelectorAll('input[type=checkbox]');
+  boxes.forEach(b=>b.checked=false);
+  updateScore();
+}
+
+function updateScore(){
+  const boxes=document.querySelectorAll('input[type=checkbox]');
+  let score=0;
+  boxes.forEach(b=>{if(b.checked){score++;}});
+  document.getElementById('score').textContent=score;
+}
+</script>
+
+</body>
+</html>
