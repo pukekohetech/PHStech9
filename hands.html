@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="color-scheme" content="light">
-<title>Workshop Ready - Technology Safety Induction</title>
+<title>Workshop Ready - Technology Safety Induction (No Repeats)</title>
 <style>
 :root{
   --navy:#143f63;
@@ -35,6 +35,7 @@ html{scroll-behavior:smooth}
 body{
   margin:0;
   min-height:100vh;
+  overflow-x:hidden;
   font-family:Segoe UI,Arial,sans-serif;
   color:var(--ink);
   background:
@@ -190,13 +191,14 @@ button:disabled{cursor:not-allowed;opacity:.52}
 
 /* Map */
 .map-shell{display:grid;grid-template-columns:250px minmax(0,1fr);gap:17px}
+.map-shell>*{min-width:0}
 .map-tools{background:#f8fafb;border:1px solid var(--line);border-radius:16px;padding:14px;align-self:start}
 .map-tools h3{margin:0 0 10px;color:var(--navy)}
 .tool-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .map-tool{border:2px solid #d0dae1;background:#fff;border-radius:11px;padding:9px 7px;min-height:66px;font-size:.79rem;font-weight:850;color:var(--navy2)}
 .map-tool span{display:block;font-size:1.45rem;margin-bottom:3px}
 .map-tool.active{border-color:var(--blue);background:var(--sky)}
-.map-board-wrap{border:1px solid var(--line);border-radius:16px;background:#eef3f5;padding:10px;overflow:auto}
+.map-board-wrap{border:1px solid var(--line);border-radius:16px;background:#eef3f5;padding:10px;overflow:auto;max-width:100%}
 #mapBoard{display:block;width:100%;min-width:670px;height:auto;background:white;border-radius:10px;touch-action:none}
 .map-checks{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:15px}
 .map-check{border:1px solid #d2dce3;border-radius:10px;padding:9px;background:#fff;font-size:.82rem;font-weight:780}
@@ -204,9 +206,32 @@ button:disabled{cursor:not-allowed;opacity:.52}
 .map-key{display:flex;gap:8px;flex-wrap:wrap;margin-top:11px}
 .key-chip{font-size:.78rem;border:1px solid #cdd9e1;background:#fff;border-radius:999px;padding:6px 9px}
 .map-note{font-size:.86rem;color:var(--muted);margin-top:12px;line-height:1.45}
+.map-item{cursor:grab;outline:none}
+.map-item.dragging{cursor:grabbing}
+.map-item:focus-visible .map-focus-ring{stroke:var(--focus);stroke-width:5;stroke-dasharray:8 5}
+.map-selection-bar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:10px;padding:10px 12px;border:1px solid #c9d7df;background:#fff;border-radius:12px;min-height:52px}
+.map-selection-copy{display:flex;align-items:center;gap:9px;min-width:0;color:var(--navy2)}
+.map-selection-copy strong{white-space:nowrap}
+.map-selection-copy span{font-size:.82rem;color:var(--muted)}
+.map-selection-actions{display:flex;gap:7px;flex-wrap:wrap}
+.map-selection-actions button:disabled{opacity:.42}
+.map-check{display:flex;align-items:center;justify-content:space-between;gap:7px}
+.map-check small{font-size:.67rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.map-check.done small{color:#356e47}
+.map-completion-banner{display:none;margin:0 0 15px;border-radius:14px;padding:14px 16px;border:1px solid #acd0b6;background:var(--green2);color:#245e38}
+.map-completion-banner.show{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.map-completion-banner.warning{border-color:#e3c473;background:var(--yellow2);color:#5a4300}
+.map-completion-banner strong{display:block;margin-bottom:3px}
+.map-complete-panel{text-align:center;padding:18px 8px}
+.map-complete-panel .map-complete-icon{font-size:3.25rem;margin-bottom:7px}
+.map-complete-panel h3{font-size:1.55rem;color:var(--navy2);margin:0 0 8px}
+.map-complete-panel p{color:var(--muted);line-height:1.5;max-width:650px;margin:0 auto 16px}
+.map-missing-list{display:flex;gap:7px;flex-wrap:wrap;justify-content:center;margin:13px 0}
+.map-missing-list span{font-size:.78rem;border:1px solid #d8c170;background:#fff8da;border-radius:999px;padding:6px 9px;color:#5a4300;font-weight:800}
 
 /* Hazard scene */
 .hazard-layout{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:18px}
+.hazard-layout>*{min-width:0}
 .hazard-board{border:1px solid var(--line);background:#edf3f5;border-radius:17px;padding:10px;overflow:auto}
 #hazardScene{width:100%;min-width:720px;height:auto;display:block;background:#faf7ed;border-radius:11px}
 .hazard-item{cursor:pointer;transition:filter .15s,opacity .15s}
@@ -326,6 +351,7 @@ body.reduce-motion *,body.reduce-motion *:before,body.reduce-motion *:after{anim
 </style>
 </head>
 <body>
+<!-- Workshop Ready quality-checked build: rotatable map furniture and navigation fix, 2026-07-20 -->
 <div id="liveRegion" class="sr-only" aria-live="polite"></div>
 
 <section id="startScreen" class="screen active">
@@ -466,7 +492,7 @@ body.reduce-motion *,body.reduce-motion *:before,body.reduce-motion *:after{anim
     <div class="help-list">
       <p><strong>Complete each mission:</strong> answer the required number of safety questions correctly to earn its badge.</p>
       <p><strong>Not yet:</strong> an incorrect answer gives a useful hint and replaces the question with a new version of the same skill. You must then show the skill correctly.</p>
-      <p><strong>Workshop map:</strong> place safety locations from your real room, then show the map to your teacher for confirmation.</p>
+      <p><strong>Workshop map:</strong> place safety locations from your real room, select and drag symbols to move them, and rotate desks, benches, boards, machine areas, bag storage or route arrows with the on-screen buttons or the R key. Complete the three map questions, then show the map to your teacher for confirmation.</p>
       <p><strong>Certificate:</strong> records completion of this learning activity only. It does not authorise use of any machine. Individual training and teacher approval are still required.</p>
       <p><strong>Emergency information:</strong> room-specific details are entered in Teacher Settings. When details are not entered, the app tells students to follow their teacher and the school's current procedure.</p>
     </div>
@@ -518,7 +544,7 @@ function freshProgress(){
 }
 function freshState(){
   return {
-    version:2,
+    version:4,
     student:{mode:"solo",name1:"",name2:"",className:"",teacher:"",workshop:""},
     settings:{...DEFAULT_SETTINGS},
     xp:0,streak:0,bestStreak:0,badges:{},
@@ -526,8 +552,9 @@ function freshState(){
     currentMission:0,
     currentView:"mission",
     quick:{best:0,last:0,missed:[],completed:0,target:12,firstTry:0},
+    questionHistory:{seen:[],total:0},
     map:{items:[],selectedTool:"exit",selectedId:null,quizCorrect:0,mistakes:{},route:[]},
-    hazards:{round:[],found:[]},
+    hazards:{round:[],found:[],seenRounds:[]},
     acknowledgement:{checks:[],name:"",date:"",complete:false},
     savedAt:null
   };
@@ -540,11 +567,38 @@ let quickQueue=[];
 let quickIndex=0;
 let quickFirstAttempt=true;
 let quickMissed=new Set();
-let lastQuestionSignature="";
+let seenQuestionSignatures=new Set();
+const generatorSkillCache=new WeakMap();
 let mapCurrentQuestion=null;
 let mapQuestionLocked=false;
 let audioContext=null;
 let toastTimer=null;
+let viewEpoch=0;
+const viewTimers=new Set();
+
+function beginView(){
+  viewEpoch++;
+  viewTimers.forEach(id=>clearTimeout(id));
+  viewTimers.clear();
+}
+function scheduleView(fn,delay){
+  const token=viewEpoch;
+  const id=setTimeout(()=>{
+    viewTimers.delete(id);
+    if(token!==viewEpoch)return;
+    fn();
+  },delay);
+  viewTimers.add(id);
+  return id;
+}
+function resetRuntimeState(){
+  beginView();
+  currentQuestion=null;questionLocked=false;
+  mapCurrentQuestion=null;mapQuestionLocked=false;
+  activeMode="mission";
+  quickQueue=[];quickIndex=0;quickFirstAttempt=true;quickMissed=new Set();
+  seenQuestionSignatures=new Set();
+}
 
 const el=id=>document.getElementById(id);
 const $=(sel,root=document)=>root.querySelector(sel);
@@ -567,6 +621,37 @@ function deepMerge(base,extra){
   });
   return out;
 }
+function normaliseAngle(value){
+  const n=Number(value);
+  if(!Number.isFinite(n))return 0;
+  return ((Math.round(n/90)*90)%360+360)%360;
+}
+function normaliseState(){
+  state.version=4;
+  if(!state.questionHistory||typeof state.questionHistory!=="object")state.questionHistory={seen:[],total:0};
+  if(!Array.isArray(state.questionHistory.seen))state.questionHistory.seen=[];
+  state.questionHistory.seen=[...new Set(state.questionHistory.seen.filter(item=>typeof item==="string"&&item.length))];
+  state.questionHistory.total=Math.max(Number(state.questionHistory.total)||0,state.questionHistory.seen.length);
+  seenQuestionSignatures=new Set(state.questionHistory.seen);
+  if(!state.hazards||typeof state.hazards!=="object")state.hazards=freshState().hazards;
+  if(!Array.isArray(state.hazards.round))state.hazards.round=[];
+  if(!Array.isArray(state.hazards.found))state.hazards.found=[];
+  if(!Array.isArray(state.hazards.seenRounds))state.hazards.seenRounds=[];
+  state.hazards.seenRounds=[...new Set(state.hazards.seenRounds.filter(item=>typeof item==="string"&&item.length))];
+  if(!state.map||typeof state.map!=="object")state.map=freshState().map;
+  if(!Array.isArray(state.map.items))state.map.items=[];
+  state.map.items=state.map.items.filter(item=>item&&MAP_TYPES[item.type]).map(item=>({
+    ...item,
+    id:item.id||uid("map"),
+    x:Number.isFinite(Number(item.x))?Number(item.x):450,
+    y:Number.isFinite(Number(item.y))?Number(item.y):260,
+    angle:normaliseAngle(item.angle)
+  }));
+  state.map.quizCorrect=clamp(Number(state.map.quizCorrect)||0,0,3);
+  if(!state.map.mistakes||typeof state.map.mistakes!=="object")state.map.mistakes={};
+  if(!MAP_TYPES[state.map.selectedTool])state.map.selectedTool="exit";
+  if(!state.map.items.some(item=>item.id===state.map.selectedId))state.map.selectedId=null;
+}
 function saveState(){
   state.savedAt=new Date().toISOString();
   try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state));localStorage.setItem(SETTINGS_KEY,JSON.stringify(state.settings));}catch(err){console.warn("Local save unavailable",err);}
@@ -583,6 +668,7 @@ function loadSaved(){
       state=deepMerge(base,parsed);
       state.settings=deepMerge(DEFAULT_SETTINGS,state.settings||{});
       state.progress=deepMerge(freshProgress(),state.progress||{});
+      normaliseState();
       return true;
     }
   }catch(err){console.warn("Saved data could not be read",err);}
@@ -590,10 +676,12 @@ function loadSaved(){
 }
 function clearSessionKeepSettings(){
   const keep={...state.settings};
+  resetRuntimeState();
   state=freshState();state.settings=keep;
   try{localStorage.removeItem(STORAGE_KEY);}catch(e){}
 }
 function clearAllData(){
+  resetRuntimeState();
   state=freshState();
   try{localStorage.removeItem(STORAGE_KEY);localStorage.removeItem(SETTINGS_KEY);}catch(e){}
 }
@@ -685,7 +773,185 @@ function makeMC({mission,skill,label,prompt,scenario="",correct,distractors,hint
 function makeMulti({mission,skill,label,prompt,scenario="",options,correct,hint,explanation}){
   return {id:uid("q"),mission,skill,label,type:"multi",prompt,scenario,options:shuffle([...options]),correct:[...correct],hint,explanation};
 }
-function qSig(q){return `${q.skill}|${q.prompt}|${Array.isArray(q.correct)?q.correct.join("|"):q.correct}`;}
+function normaliseQuestionPart(value){
+  return String(value??"").replace(/\s+/g," ").trim().toLowerCase();
+}
+function qSig(q){
+  const correct=Array.isArray(q.correct)?[...q.correct].map(normaliseQuestionPart).sort().join("||"):normaliseQuestionPart(q.correct);
+  return [q.mission,q.skill,q.type,q.label,q.scenario,q.prompt,correct].map(normaliseQuestionPart).join("¦");
+}
+function questionWasSeen(q){return seenQuestionSignatures.has(qSig(q));}
+function rememberQuestion(q){
+  const sig=qSig(q);
+  if(!seenQuestionSignatures.has(sig)){
+    seenQuestionSignatures.add(sig);
+    if(!state.questionHistory||typeof state.questionHistory!=="object")state.questionHistory={seen:[],total:0};
+    if(!Array.isArray(state.questionHistory.seen))state.questionHistory.seen=[];
+    state.questionHistory.seen.push(sig);
+    state.questionHistory.total=(Number(state.questionHistory.total)||0)+1;
+    state.savedAt=new Date().toISOString();
+    try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state));}catch(err){console.warn("Question history could not be saved",err);}
+  }
+  return q;
+}
+function generatorSkill(gen){
+  if(generatorSkillCache.has(gen))return generatorSkillCache.get(gen);
+  let skill="";
+  try{skill=gen().skill||"";}catch(err){console.warn("Question generator could not be inspected",err);}
+  generatorSkillCache.set(gen,skill);
+  return skill;
+}
+const QUESTION_CONTEXTS=[
+  "During a different practical lesson",
+  "While helping a new student",
+  "At another workbench",
+  "During a routine workshop safety check",
+  "Before practical work begins",
+  "As the class prepares to start",
+  "In another Technology workshop",
+  "During a teacher-led safety review",
+  "After moving to a new work area",
+  "While checking the workshop rules",
+  "During a second safety scenario",
+  "At the start of a new class",
+  "While preparing equipment for use",
+  "During a class safety discussion",
+  "When checking a different workshop area"
+];
+const QUESTION_PROMPT_FRAMES=[
+  prompt=>`Safety check — ${prompt}`,
+  prompt=>`Apply the workshop rule. ${prompt}`,
+  prompt=>`${prompt} Select the safest answer.`,
+  prompt=>`Consider the possible harm before answering. ${prompt}`,
+  prompt=>`Use the safety procedure to decide. ${prompt}`,
+  prompt=>`Choose the response that best controls the risk. ${prompt}`,
+  prompt=>`Think like a responsible workshop user. ${prompt}`,
+  prompt=>`Use what you have learned in this mission. ${prompt}`
+];
+const SKILL_REFRAMES={
+  "fire-route":[
+    {scenario:"The class has begun evacuating after the fire alarm.",prompt:"Which route should you use, and where should you report?"},
+    {scenario:"You are beside a door when the fire alarm sounds.",prompt:"How should you decide which exit to use and where to go afterwards?"},
+    {scenario:"A new student asks where the class finishes a fire evacuation.",prompt:"Which answer follows the confirmed workshop procedure?"},
+    {scenario:"The teacher directs the class to evacuate the workshop.",prompt:"What route and assembly destination should students follow?"}
+  ],
+  "fire-belongings":[
+    {scenario:"The fire alarm sounds while your jacket is beside another bench.",prompt:"What should you do about the jacket?"},
+    {scenario:"Your phone is on a charging shelf when an evacuation begins.",prompt:"What is the safest response?"},
+    {scenario:"A pencil case is behind you when the teacher says to evacuate.",prompt:"What should take priority?"},
+    {scenario:"You remember an item on the far side of the workshop during the alarm.",prompt:"What should you do next?"}
+  ],
+  "fire-equipment":[
+    {scenario:"A student points to the fire extinguisher during an evacuation.",prompt:"Who may use it when doing so is appropriate and safe?"},
+    {scenario:"The class is leaving and someone asks whether students should stop to use the extinguisher.",prompt:"Which response is correct?"},
+    {scenario:"A fire extinguisher is visible beside the exit.",prompt:"Who should operate this equipment?"},
+    {scenario:"A learner suggests that whoever arrives first should use the extinguisher.",prompt:"Which answer follows safe procedure?"}
+  ],
+  "lockdown-first":[
+    {scenario:"A lockdown instruction is announced while students are marking out material.",prompt:"What should students do immediately?"},
+    {scenario:"The class is watching a demonstration when a lockdown begins.",prompt:"What is the correct first response?"},
+    {scenario:"A student is carrying a hand tool when the lockdown instruction is given.",prompt:"What should happen next?"},
+    {scenario:"A lockdown starts just as practical work is beginning.",prompt:"Which action should come first?"}
+  ],
+  "lockdown-quiet":[
+    {scenario:"The class has moved to the teacher-directed secure area.",prompt:"Why is quiet behaviour important now?"},
+    {scenario:"Several students begin whispering during a lockdown.",prompt:"Why should they stop and listen?"},
+    {scenario:"The teacher may need to give further instructions during a lockdown.",prompt:"Why must the room remain quiet?"},
+    {scenario:"A student asks why normal conversation is not appropriate during lockdown.",prompt:"Which explanation is correct?"}
+  ],
+  "lockdown-door":[
+    {scenario:"The door handle moves during a lockdown.",prompt:"What should a student do?"},
+    {scenario:"A voice is heard outside the locked workshop door.",prompt:"Who should manage the door and procedure?"},
+    {scenario:"Someone asks a student to check the corridor during lockdown.",prompt:"What is the safe response?"},
+    {scenario:"There is a knock after the class has moved to the secure area.",prompt:"Which action follows the lockdown procedure?"}
+  ],
+  "lockdown-device":[
+    {scenario:"A phone begins ringing during a lockdown.",prompt:"What should happen to the device?"},
+    {scenario:"A smartwatch starts making notification sounds during lockdown.",prompt:"What is the appropriate response?"},
+    {scenario:"A student wants to message friends in another room during lockdown.",prompt:"Which action follows safe procedure?"},
+    {scenario:"A tablet is still playing audio after the lockdown instruction.",prompt:"What should the student do?"}
+  ],
+  "lockdown-local":[
+    {scenario:"A student is unsure where this workshop's secure area is.",prompt:"Whose direction should determine where the class moves?"},
+    {scenario:"Different classrooms use different lockdown arrangements.",prompt:"Which location should workshop students use?"},
+    {scenario:"A new student asks where to go during a workshop lockdown.",prompt:"Which answer is safe and accurate?"},
+    {scenario:"The lockdown instruction is given and students remember that room procedures differ.",prompt:"Where should they move?"}
+  ],
+  "quake-dch":[
+    {scenario:"Strong shaking starts while you are standing beside a workbench.",prompt:"What immediate action should you take?"},
+    {scenario:"An earthquake begins during a teacher demonstration.",prompt:"Which response protects you during the shaking?"},
+    {scenario:"The floor begins moving while students are preparing tools.",prompt:"What should everyone do immediately?"},
+    {scenario:"Strong shaking begins before the class can leave the room.",prompt:"Which action is correct during the shaking?"}
+  ],
+  "quake-machine":[
+    {scenario:"Shaking begins beside a tall material rack and a stationary machine.",prompt:"How should you respond to the immediate falling hazards?"},
+    {scenario:"Tools begin moving on a shelf during an earthquake.",prompt:"What should you do?"},
+    {scenario:"You are close to unstable stored material when shaking starts.",prompt:"Which response is safest?"},
+    {scenario:"An overhead item appears likely to fall during strong shaking.",prompt:"What action should you take before holding your cover?"}
+  ],
+  "quake-after":[
+    {scenario:"The shaking has stopped and tools have fallen onto the floor.",prompt:"What should happen before students move around?"},
+    {scenario:"After an earthquake, the workshop layout no longer looks safe.",prompt:"What is the correct next step?"},
+    {scenario:"The first shaking has ended, but aftershocks are possible.",prompt:"How should students respond?"},
+    {scenario:"A student wants to restart work immediately after the shaking.",prompt:"Which action should happen instead?"}
+  ],
+  "quake-electric":[
+    {scenario:"After the shaking, a power point is cracked and loose.",prompt:"What is the safest response?"},
+    {scenario:"An electrical lead has been pulled partly out of a machine after an earthquake.",prompt:"What should students do?"},
+    {scenario:"Water and damaged electrical equipment are visible after the shaking.",prompt:"Which response controls the risk?"},
+    {scenario:"A machine cable appears cut after items fell from a shelf.",prompt:"What should happen before anyone approaches it?"}
+  ],
+  "quake-local":[
+    {scenario:"The shaking has stopped and a student asks whether to leave the workshop.",prompt:"Who determines where the class goes next?"},
+    {scenario:"Some rooms may remain in place while others evacuate after an earthquake.",prompt:"Which instruction should workshop students follow?"},
+    {scenario:"A new student does not know the school's after-shaking location.",prompt:"What is the correct response?"},
+    {scenario:"The workshop may contain new hazards after the earthquake.",prompt:"Where should students move?"}
+  ],
+  "map-route":[
+    {scenario:"You are drawing the evacuation route from the main workbench area.",prompt:"What must the route show?"},
+    {scenario:"A route line on a map crosses over machine tables.",prompt:"What should a correct evacuation route show instead?"},
+    {scenario:"A new student uses the map to find the emergency exit.",prompt:"What makes the marked route suitable?"},
+    {scenario:"You are checking whether the map route can be followed quickly.",prompt:"Which description is correct?"}
+  ],
+  "map-confirm":[
+    {scenario:"You have finished placing the safety symbols on your map.",prompt:"How should the locations be verified?"},
+    {scenario:"Two workshops have different layouts.",prompt:"How can a student confirm that their own map is accurate?"},
+    {scenario:"A classmate copied a workshop map from another room.",prompt:"What should they do before relying on it?"},
+    {scenario:"The map appears complete, but one safety item may have moved.",prompt:"What is the correct way to check it?"}
+  ],
+  "ppe-gloves":[
+    {scenario:"A student considers wearing loose fabric gloves while using a lathe.",prompt:"What entanglement danger must be considered?"},
+    {scenario:"A rotating spindle can catch loose material.",prompt:"Why might gloves be prohibited for this task?"},
+    {scenario:"A learner reaches towards rotating equipment while wearing gloves.",prompt:"What makes this unsafe?"},
+    {scenario:"The teacher says not to wear gloves for a particular rotating-machine task.",prompt:"What is the safety reason?"}
+  ],
+  "safe-working":[
+    {scenario:"Offcuts and tools are building up around a workbench.",prompt:"Which behaviour would make the area safest?"},
+    {scenario:"A student is preparing to use hand tools at a crowded bench.",prompt:"What should be corrected before work begins?"},
+    {scenario:"The floor beside a practical task is becoming cluttered.",prompt:"Which action supports safe working?"},
+    {scenario:"A class is packing away after practical work.",prompt:"Which behaviour leaves the area safe for the next group?"}
+  ]
+};
+function lowerFirst(text){const value=String(text||"");return value?value.charAt(0).toLowerCase()+value.slice(1):value;}
+function reframeQuestion(q,index){
+  const specific=SKILL_REFRAMES[q.skill]||[];
+  if(specific.length){
+    const item=specific[index%specific.length];
+    const cycle=Math.floor(index/specific.length);
+    if(cycle===0)return {...q,id:uid("q"),scenario:item.scenario,prompt:item.prompt,options:shuffle([...(q.options||[])])};
+    const context=QUESTION_CONTEXTS[cycle%QUESTION_CONTEXTS.length];
+    const frame=QUESTION_PROMPT_FRAMES[Math.floor(cycle/QUESTION_CONTEXTS.length)%QUESTION_PROMPT_FRAMES.length];
+    const pass=Math.floor(cycle/(QUESTION_CONTEXTS.length*QUESTION_PROMPT_FRAMES.length));
+    const extra=pass?` — additional case ${pass+1}`:"";
+    return {...q,id:uid("q"),scenario:`${context}${extra}, ${lowerFirst(item.scenario)}`,prompt:frame(item.prompt),options:shuffle([...(q.options||[])])};
+  }
+  const context=QUESTION_CONTEXTS[index%QUESTION_CONTEXTS.length];
+  const frame=QUESTION_PROMPT_FRAMES[Math.floor(index/QUESTION_CONTEXTS.length)%QUESTION_PROMPT_FRAMES.length];
+  const pass=Math.floor(index/(QUESTION_CONTEXTS.length*QUESTION_PROMPT_FRAMES.length));
+  const extra=pass?` — additional case ${pass+1}`:"";
+  const scenario=q.scenario?`${context}${extra}, ${lowerFirst(q.scenario)}`:`${context}${extra}, a student checks the relevant safety rule.`;
+  return {...q,id:uid("q"),scenario,prompt:frame(q.prompt),options:shuffle([...(q.options||[])])};
+}
 
 const roleScenarios=[
   {text:"A student has never been trained to use the drill press.",owner:"Teacher",why:"The teacher must provide training and approve use before the student operates the machine."},
@@ -953,18 +1219,31 @@ const GENERATORS={
 };
 const ALL_GENERATORS=Object.entries(GENERATORS).flatMap(([mission,gens])=>gens.map(gen=>({mission:Number(mission),gen})));
 function getQuestion(missionIndex,preferredSkill=null){
-  let q=null;
-  for(let tries=0;tries<20;tries++){
-    const gens=missionIndex===9?ALL_GENERATORS.map(x=>x.gen):(GENERATORS[missionIndex]||[genSafetyRule]);
-    q=choice(gens)();
-    if(preferredSkill&&q.skill!==preferredSkill){
-      const matching=gens.map(g=>{try{return g();}catch(e){return null;}}).find(x=>x&&x.skill===preferredSkill);
-      if(matching)q=matching;
-    }
-    if(qSig(q)!==lastQuestionSignature)break;
+  const baseGenerators=missionIndex===9?ALL_GENERATORS.map(x=>x.gen):(GENERATORS[missionIndex]||[genSafetyRule]);
+  const matchingGenerators=preferredSkill?baseGenerators.filter(gen=>generatorSkill(gen)===preferredSkill):baseGenerators;
+  const generators=matchingGenerators.length?matchingGenerators:baseGenerators;
+  let fallback=null;
+  const attempts=Math.max(220,generators.length*45);
+  for(let tries=0;tries<attempts;tries++){
+    let q=null;
+    try{q=choice(generators)();}catch(err){console.warn("Question generation failed",err);continue;}
+    if(!q)continue;
+    if(preferredSkill&&q.skill!==preferredSkill)continue;
+    fallback=q;
+    if(!questionWasSeen(q))return rememberQuestion(q);
   }
-  lastQuestionSignature=qSig(q);
-  return q;
+  if(!fallback){
+    try{fallback=choice(generators)();}catch(err){fallback=genSafetyRule();}
+  }
+  for(let variantIndex=0;variantIndex<QUESTION_CONTEXTS.length*QUESTION_PROMPT_FRAMES.length;variantIndex++){
+    const variant=reframeQuestion(fallback,variantIndex);
+    if(!questionWasSeen(variant))return rememberQuestion(variant);
+  }
+  const serial=(Number(state.questionHistory?.total)||0)+1;
+  const finalVariant=reframeQuestion(fallback,serial);
+  finalVariant.scenario=`${finalVariant.scenario} This is a new safety example for this session.`;
+  finalVariant.prompt=`${finalVariant.prompt} Example ${serial}.`;
+  return rememberQuestion(finalVariant);
 }
 function renderMissionNav(){
   const nav=el("missionNav");
@@ -1041,11 +1320,13 @@ function heroHTML(index){
 }
 function progressSideHTML(index){
   const m=MISSIONS[index],p=state.progress[m.id],required=missionRequired(index),pct=Math.min(100,Math.round((p.correct/required)*100));
-  return `<aside class="side-panel"><div class="meter-card"><h3>Mission progress</h3><div class="meter"><div style="width:${pct}%"></div></div><div class="meter-copy"><span>${p.correct} correct</span><span>${required} needed</span></div></div><div class="meter-card"><div class="badge-preview"><div class="badge-circle">${m.badgeIcon}</div><div><strong>${escapeHTML(m.badge)}</strong><span>${p.completed?"Badge earned":"Complete the mission to earn it"}</span></div></div></div><div class="meter-card rule-card"><strong>Remember</strong><br>An incorrect answer is replaced with a new version of the same safety skill.</div></aside>`;
+  return `<aside class="side-panel"><div class="meter-card"><h3>Mission progress</h3><div class="meter"><div style="width:${pct}%"></div></div><div class="meter-copy"><span>${p.correct} correct</span><span>${required} needed</span></div></div><div class="meter-card"><div class="badge-preview"><div class="badge-circle">${m.badgeIcon}</div><div><strong>${escapeHTML(m.badge)}</strong><span>${p.completed?"Badge earned":"Complete the mission to earn it"}</span></div></div></div><div class="meter-card rule-card"><strong>No repeated questions</strong><br>Every question shown in this student session is recorded. Incorrect answers are replaced with a new version of the same safety skill.</div></aside>`;
 }
 function showMission(index){
   if(!missionUnlocked(index)){showToast("Complete the earlier mission first.");return;}
+  beginView();
   state.currentMission=index;state.currentView="mission";activeMode="mission";currentQuestion=null;questionLocked=false;
+  mapCurrentQuestion=null;mapQuestionLocked=false;
   saveState();setActiveNav("mission",index);updatePageTitle(`${index+1}. ${MISSIONS[index].title}`,MISSIONS[index].subtitle);
   if(index===5&&state.settings.enableMap)renderMapMission();
   else if(index===7)renderHazardMission();
@@ -1082,7 +1363,8 @@ function renderQuestionCard(){
 function showHint(){
   if(!currentQuestion)return;
   const box=el("feedbackBox");if(!box)return;
-  const miss=state.progress[MISSIONS[currentQuestion.mission].id]?.mistakes?.[currentQuestion.skill]||0;
+  const progressIndex=activeMode==="quick"?currentQuestion.mission:state.currentMission;
+  const miss=state.progress[MISSIONS[progressIndex].id]?.mistakes?.[currentQuestion.skill]||0;
   let extra="";
   if(miss>=2)extra=" Think about the rule that must be true before work can continue.";
   box.className="feedback hint show";box.innerHTML=`<strong>Hint:</strong> ${escapeHTML(currentQuestion.hint+extra)}`;
@@ -1120,21 +1402,24 @@ function handleCorrectQuestion(){
     state.xp+=10;state.streak++;state.bestStreak=Math.max(state.bestStreak,state.streak);
     if(quickFirstAttempt)state.quick.firstTry++;
     quickIndex++;state.quick.completed=quickIndex;saveState();
-    setTimeout(()=>{
+    scheduleView(()=>{
+      if(activeMode!=="quick"||state.currentView!=="quick")return;
       if(quickIndex>=state.quick.target)finishQuickCheck();
       else{quickFirstAttempt=true;currentQuestion=quickQueue[quickIndex]();questionLocked=false;renderQuestionCard();updateQuickSide();}
     },1100);
     return;
   }
   const index=state.currentMission,m=MISSIONS[index],p=state.progress[m.id];
-  p.correct++;p.skills[currentQuestion.skill]=true;
+  const skill=currentQuestion.skill;
+  p.correct++;p.skills[skill]=true;
   state.xp+=15;state.streak++;state.bestStreak=Math.max(state.bestStreak,state.streak);saveState();
-  setTimeout(()=>{
+  scheduleView(()=>{
+    if(activeMode!=="mission"||state.currentView!=="mission"||state.currentMission!==index)return;
     if(p.correct>=missionRequired(index)){
       if(index===9){renderAcknowledgementOrComplete();}
       else{completeMission(index);renderCompletion(index);}
     }else{
-      currentQuestion=getQuestion(index);questionLocked=false;
+      questionLocked=false;
       renderStandardMission(index);
     }
   },1100);
@@ -1144,13 +1429,20 @@ function handleWrongQuestion(){
   if(activeMode==="quick"){
     quickFirstAttempt=false;quickMissed.add(`${currentQuestion.mission}|${currentQuestion.skill}`);saveState();
     const oldSkill=currentQuestion.skill,mission=currentQuestion.mission;
-    setTimeout(()=>{currentQuestion=getQuestion(mission,oldSkill);questionLocked=false;renderQuestionCard();updateQuickSide();},1500);
+    scheduleView(()=>{
+      if(activeMode!=="quick"||state.currentView!=="quick")return;
+      currentQuestion=getQuestion(mission,oldSkill);questionLocked=false;renderQuestionCard();updateQuickSide();
+    },1500);
     return;
   }
-  const p=state.progress[MISSIONS[state.currentMission].id];
-  p.mistakes[currentQuestion.skill]=(p.mistakes[currentQuestion.skill]||0)+1;saveState();
+  const mission=state.currentMission;
+  const p=state.progress[MISSIONS[mission].id];
   const oldSkill=currentQuestion.skill;
-  setTimeout(()=>{currentQuestion=getQuestion(state.currentMission,oldSkill);questionLocked=false;renderQuestionCard();},1500);
+  p.mistakes[oldSkill]=(p.mistakes[oldSkill]||0)+1;saveState();
+  scheduleView(()=>{
+    if(activeMode!=="mission"||state.currentView!=="mission"||state.currentMission!==mission)return;
+    currentQuestion=getQuestion(mission,oldSkill);questionLocked=false;renderQuestionCard();
+  },1500);
 }
 function completeMission(index){
   const m=MISSIONS[index],p=state.progress[m.id];
@@ -1182,29 +1474,79 @@ const MAP_TYPES={
 };
 const MAP_ESSENTIAL=["exit","firstaid","estop","extinguisher","bag"];
 const MAP_CHECKS=["exit","firstaid","estop","extinguisher","alarm","bag","desk","bench","route"];
+const ROTATABLE_MAP_TYPES=new Set(["bag","desk","bench","board","machine","route"]);
+
+function mapItemDimensions(item){
+  const large=["bench","desk","machine","board","bag"].includes(item.type);
+  let width=item.type==="route"?86:(large?112:82),height=item.type==="route"?46:(large?58:72);
+  if(normaliseAngle(item.angle)%180===90)[width,height]=[height,width];
+  return {width,height};
+}
+function clampMapItemPosition(item){
+  const {width,height}=mapItemDimensions(item),pad=29;
+  item.x=clamp(Number(item.x)||450,pad+width/2,900-pad-width/2);
+  item.y=clamp(Number(item.y)||260,pad+height/2,520-pad-height/2);
+  return item;
+}
+function selectedMapItem(){return state.map.items.find(item=>item.id===state.map.selectedId)||null;}
+function mapMissingEssentials(){return MAP_ESSENTIAL.filter(type=>!state.map.items.some(item=>item.type===type));}
+function mapTransform(item){return `translate(${Math.round(item.x*10)/10} ${Math.round(item.y*10)/10})`;}
+function rotateMapItem(id,delta=90){
+  const item=state.map.items.find(entry=>entry.id===id);if(!item)return false;
+  if(!ROTATABLE_MAP_TYPES.has(item.type)){showToast(`${MAP_TYPES[item.type].label} does not need rotating.`);return false;}
+  item.angle=normaliseAngle((item.angle||0)+delta);clampMapItemPosition(item);saveState();renderMapItems();renderMapChecks();
+  const node=$(`[data-id="${item.id}"]`,el("mapItemsLayer"));if(node)node.focus();
+  announce(`${MAP_TYPES[item.type].label} rotated to ${item.angle} degrees.`);return true;
+}
 function renderMapMission(){
   const p=state.progress.map;
   if(!state.map.selectedTool)state.map.selectedTool="exit";
-  el("mainContent").innerHTML=`${heroHTML(5)}<section class="card" style="margin-top:18px"><div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap"><div><div class="eyebrow">Interactive room map</div><h2 style="margin:5px 0;color:var(--navy2)">${escapeHTML(state.student.workshop||state.settings.workshopName||"My workshop")}</h2><p style="margin:0;color:var(--muted)">Choose a symbol, then click the map to place it. Drag symbols to adjust their position.</p></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="secondary-btn small-btn" id="deleteMapItem">Delete selected</button><button class="secondary-btn small-btn" id="clearMap">Clear map</button><button class="primary-btn small-btn" id="printMap">Print map</button></div></div><div class="map-shell" style="margin-top:17px"><div class="map-tools"><h3>Map symbols</h3><div class="tool-grid">${Object.entries(MAP_TYPES).map(([k,v])=>`<button class="map-tool ${state.map.selectedTool===k?"active":""}" data-map-tool="${k}"><span>${escapeHTML(v.icon)}</span>${escapeHTML(v.label)}</button>`).join("")}</div></div><div><div class="map-board-wrap"><svg id="mapBoard" viewBox="0 0 900 520" role="img" aria-label="Interactive workshop map"><defs><marker id="arrowHead" markerWidth="8" markerHeight="8" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L6,3 z" fill="#e29c22"/></marker></defs><rect x="20" y="20" width="860" height="480" rx="16" fill="#ffffff" stroke="#8fa4b2" stroke-width="4"/><path d="M70 110h760M70 210h760M70 310h760M70 410h760" stroke="#edf1f3" stroke-width="2"/><path d="M170 55v410M330 55v410M490 55v410M650 55v410" stroke="#edf1f3" stroke-width="2"/><text x="45" y="48" font-size="17" fill="#6b7881">Click empty space to place selected symbol</text><g id="mapItemsLayer"></g></svg></div><div class="map-key" id="mapKey"></div></div></div><div class="map-checks" id="mapChecks"></div><p class="map-note"><strong>Completion requirement:</strong> place the five essential locations—emergency exit, first aid, emergency stop, fire extinguisher and bag storage—then answer three map questions. Show the finished map to your teacher to confirm the real locations.</p></section><section class="quiz-layout" style="margin-top:18px"><div class="card question-card" id="mapQuizArea"></div><aside class="side-panel"><div class="meter-card"><h3>Map question progress</h3><div class="meter"><div id="mapQuizMeter"></div></div><div class="meter-copy"><span id="mapQuizCopy"></span><span>3 needed</span></div></div><div class="meter-card"><div class="badge-preview"><div class="badge-circle">🗺️</div><div><strong>Workshop Navigator</strong><span>${p.completed?"Badge earned":"Build and check the map"}</span></div></div></div><div class="meter-card rule-card"><strong>Teacher check</strong><br>The app cannot see your room. Confirm every location with your teacher.</div></aside></section>`;
-  renderMapItems();renderMapChecks();renderMapQuestion();bindMapEvents();
+  el("mainContent").innerHTML=`${heroHTML(5)}<section class="card" style="margin-top:18px"><div id="mapCompletionBanner" class="map-completion-banner" aria-live="polite"></div><div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap"><div><div class="eyebrow">Interactive room map</div><h2 style="margin:5px 0;color:var(--navy2)">${escapeHTML(state.student.workshop||state.settings.workshopName||"My workshop")}</h2><p style="margin:0;color:var(--muted)">Choose a symbol, then click empty map space to place it. Select and drag a symbol to move it. Desks, benches and other rectangular items can be rotated.</p></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="secondary-btn small-btn" id="clearMap">Clear map</button><button class="primary-btn small-btn" id="printMap">Print map</button></div></div><div class="map-shell" style="margin-top:17px"><div class="map-tools"><h3>Map symbols</h3><div class="tool-grid">${Object.entries(MAP_TYPES).map(([k,v])=>`<button class="map-tool ${state.map.selectedTool===k?"active":""}" data-map-tool="${k}"><span>${escapeHTML(v.icon)}</span>${escapeHTML(v.label)}</button>`).join("")}</div></div><div><div class="map-board-wrap"><svg id="mapBoard" viewBox="0 0 900 520" role="application" aria-label="Interactive workshop map. Select a symbol and use arrow keys to move it. Press R to rotate suitable items and Delete to remove one."><defs><marker id="arrowHead" markerWidth="8" markerHeight="8" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L6,3 z" fill="#e29c22"/></marker></defs><rect x="20" y="20" width="860" height="480" rx="16" fill="#ffffff" stroke="#8fa4b2" stroke-width="4"/><path d="M70 110h760M70 210h760M70 310h760M70 410h760" stroke="#edf1f3" stroke-width="2"/><path d="M170 55v410M330 55v410M490 55v410M650 55v410" stroke="#edf1f3" stroke-width="2"/><text x="45" y="48" font-size="17" fill="#6b7881">Click empty space to place selected symbol</text><g id="mapItemsLayer"></g></svg></div><div class="map-selection-bar" id="mapSelectionBar"></div><div class="map-key" id="mapKey"></div></div></div><div class="map-checks" id="mapChecks"></div><p class="map-note"><strong>Completion requirement:</strong> place the five required locations—emergency exit, first aid, emergency stop, fire extinguisher and bag storage—then answer three map questions. Items marked “helpful” improve the map but do not block progress. Show the finished map to your teacher to confirm the real locations.</p></section><section class="quiz-layout" style="margin-top:18px"><div class="card question-card" id="mapQuizArea"></div><aside class="side-panel"><div class="meter-card"><h3>Map question progress</h3><div class="meter"><div id="mapQuizMeter"></div></div><div class="meter-copy"><span id="mapQuizCopy"></span><span>3 needed</span></div></div><div class="meter-card"><div class="badge-preview"><div class="badge-circle">🗺️</div><div><strong>Workshop Navigator</strong><span id="mapBadgeStatus">${p.completed?"Badge earned":"Build and check the map"}</span></div></div></div><div class="meter-card rule-card"><strong>Keyboard map controls</strong><br>Arrow keys move a selected symbol. Shift + Arrow moves faster. R rotates clockwise, Shift + R rotates left, and Delete removes it.</div><div class="meter-card rule-card"><strong>Teacher check</strong><br>The app cannot see your room. Confirm every location with your teacher.</div></aside></section>`;
+  renderMapItems();renderMapChecks();renderMapQuestion();bindMapEvents();renderMapCompletionBanner();
 }
 function mapItemSVG(item){
   const t=MAP_TYPES[item.type]||MAP_TYPES.bench;
-  if(item.type==="route")return `<g class="map-item" data-id="${item.id}" tabindex="0" aria-label="${escapeHTML(t.label)}" transform="translate(${item.x} ${item.y})"><line x1="-35" y1="0" x2="35" y2="0" stroke="${t.fill}" stroke-width="10" stroke-linecap="round" marker-end="url(#arrowHead)"/><circle cx="0" cy="0" r="28" fill="transparent"/></g>`;
-  const width=["bench","desk","machine","board","bag"].includes(item.type)?112:82;
-  const height=["bench","desk","machine","board","bag"].includes(item.type)?58:72;
-  return `<g class="map-item ${state.map.selectedId===item.id?"selected":""}" data-id="${item.id}" tabindex="0" aria-label="${escapeHTML(t.label)}" transform="translate(${item.x} ${item.y})"><rect x="${-width/2}" y="${-height/2}" width="${width}" height="${height}" rx="11" fill="${t.fill}" stroke="${state.map.selectedId===item.id?"#f6c845":"#ffffff"}" stroke-width="${state.map.selectedId===item.id?6:3}"/><text x="0" y="5" text-anchor="middle" fill="#fff" font-size="${t.icon.length>5?12:16}" font-weight="900">${escapeHTML(t.icon)}</text><title>${escapeHTML(t.label)}</title></g>`;
+  item.angle=normaliseAngle(item.angle);
+  const selected=state.map.selectedId===item.id;
+  const aria=`${t.label}, orientation ${item.angle} degrees${selected?", selected":""}`;
+  if(item.type==="route")return `<g class="map-item ${selected?"selected":""}" data-id="${item.id}" data-rotatable="true" tabindex="0" role="button" aria-label="${escapeHTML(aria)}" transform="${mapTransform(item)}"><circle class="map-focus-ring" cx="0" cy="0" r="32" fill="transparent" stroke="transparent"/><g transform="rotate(${item.angle})"><line x1="-35" y1="0" x2="35" y2="0" stroke="${t.fill}" stroke-width="10" stroke-linecap="round" marker-end="url(#arrowHead)"/></g></g>`;
+  const large=["bench","desk","machine","board","bag"].includes(item.type),width=large?112:82,height=large?58:72;
+  const rotateShape=ROTATABLE_MAP_TYPES.has(item.type)?item.angle:0;
+  return `<g class="map-item ${selected?"selected":""}" data-id="${item.id}" data-rotatable="${ROTATABLE_MAP_TYPES.has(item.type)}" tabindex="0" role="button" aria-label="${escapeHTML(aria)}" transform="${mapTransform(item)}"><circle class="map-focus-ring" cx="0" cy="0" r="${Math.max(width,height)/2+9}" fill="transparent" stroke="transparent"/><g transform="rotate(${rotateShape})"><rect x="${-width/2}" y="${-height/2}" width="${width}" height="${height}" rx="11" fill="${t.fill}" stroke="${selected?"#f6c845":"#ffffff"}" stroke-width="${selected?6:3}"/></g><text x="0" y="5" text-anchor="middle" fill="#fff" font-size="${t.icon.length>5?12:16}" font-weight="900" pointer-events="none">${escapeHTML(t.icon)}</text><title>${escapeHTML(t.label)}</title></g>`;
 }
-function renderMapItems(){
+function renderMapItems(focusId=null){
   const layer=el("mapItemsLayer");if(!layer)return;
+  state.map.items.forEach(item=>clampMapItemPosition(item));
   layer.innerHTML=state.map.items.map(mapItemSVG).join("");
-  el("mapKey").innerHTML=[...new Set(state.map.items.map(i=>i.type))].map(type=>`<span class="key-chip"><strong>${escapeHTML(MAP_TYPES[type].icon)}</strong> ${escapeHTML(MAP_TYPES[type].label)}</span>`).join("")||'<span class="key-chip">No symbols placed yet</span>';
+  const key=el("mapKey");if(key)key.innerHTML=[...new Set(state.map.items.map(i=>i.type))].map(type=>`<span class="key-chip"><strong>${escapeHTML(MAP_TYPES[type].icon)}</strong> ${escapeHTML(MAP_TYPES[type].label)}</span>`).join("")||'<span class="key-chip">No symbols placed yet</span>';
+  renderMapSelectionBar();
+  if(focusId){const node=$(`[data-id="${focusId}"]`,layer);if(node)requestAnimationFrame(()=>node.focus());}
+}
+function renderMapSelectionBar(){
+  const bar=el("mapSelectionBar");if(!bar)return;
+  const item=selectedMapItem();
+  if(!item){
+    bar.innerHTML='<div class="map-selection-copy"><strong>No symbol selected</strong><span>Click or tap a placed symbol to select it.</span></div><div class="map-selection-actions"><button class="secondary-btn small-btn" id="rotateMapLeft" disabled>↶ Rotate left</button><button class="secondary-btn small-btn" id="rotateMapRight" disabled>↷ Rotate right</button><button class="secondary-btn small-btn" id="deleteMapItem" disabled>Delete</button></div>';
+  }else{
+    const t=MAP_TYPES[item.type],rotatable=ROTATABLE_MAP_TYPES.has(item.type);
+    bar.innerHTML=`<div class="map-selection-copy"><strong>${escapeHTML(t.icon)} ${escapeHTML(t.label)}</strong><span>${rotatable?`Orientation: ${normaliseAngle(item.angle)}° · use rotate buttons or R`:`This safety symbol stays upright.`}</span></div><div class="map-selection-actions"><button class="secondary-btn small-btn" id="rotateMapLeft" ${rotatable?"":"disabled"}>↶ Rotate left</button><button class="secondary-btn small-btn" id="rotateMapRight" ${rotatable?"":"disabled"}>↷ Rotate right</button><button class="secondary-btn small-btn" id="deleteMapItem">Delete</button></div>`;
+  }
+  const left=el("rotateMapLeft"),right=el("rotateMapRight"),del=el("deleteMapItem");
+  if(left)left.addEventListener("click",()=>{const selected=selectedMapItem();if(selected)rotateMapItem(selected.id,-90);});
+  if(right)right.addEventListener("click",()=>{const selected=selectedMapItem();if(selected)rotateMapItem(selected.id,90);});
+  if(del)del.addEventListener("click",deleteSelectedMapItem);
+}
+function deleteSelectedMapItem(){
+  if(!state.map.selectedId){showToast("Select a map symbol first.");return;}
+  const id=state.map.selectedId;
+  state.map.items=state.map.items.filter(item=>item.id!==id);state.map.selectedId=null;saveState();renderMapItems();renderMapChecks();
+  announce("Selected map symbol deleted.");
 }
 function renderMapChecks(){
   const holder=el("mapChecks");if(!holder)return;
   holder.innerHTML=MAP_CHECKS.map(type=>{
-    const done=state.map.items.some(i=>i.type===type);
-    return `<div class="map-check ${done?"done":""}">${done?"✓":"○"} ${escapeHTML(MAP_TYPES[type].label)}</div>`;
+    const done=state.map.items.some(i=>i.type===type),required=MAP_ESSENTIAL.includes(type);
+    return `<div class="map-check ${done?"done":""}"><span>${done?"✓":"○"} ${escapeHTML(MAP_TYPES[type].label)}</span><small>${required?"Required":"Helpful"}</small></div>`;
   }).join("");
   checkMapMissionCompletion();
 }
@@ -1213,85 +1555,163 @@ function bindMapEvents(){
     state.map.selectedTool=btn.dataset.mapTool;state.map.selectedId=null;saveState();
     $$('[data-map-tool]').forEach(b=>b.classList.toggle("active",b===btn));renderMapItems();
   }));
-  const svg=el("mapBoard");
+  const svg=el("mapBoard");if(!svg)return;
+  let drag=null,suppressBoardClick=false;
   svg.addEventListener("click",ev=>{
+    if(suppressBoardClick){suppressBoardClick=false;return;}
     if(ev.target.closest(".map-item"))return;
     const pt=svgPoint(svg,ev.clientX,ev.clientY);
-    state.map.items.push({id:uid("map"),type:state.map.selectedTool,x:clamp(pt.x,55,845),y:clamp(pt.y,65,475)});
-    saveState();renderMapItems();renderMapChecks();
+    const item=clampMapItemPosition({id:uid("map"),type:state.map.selectedTool,x:pt.x,y:pt.y,angle:0});
+    state.map.items.push(item);state.map.selectedId=item.id;saveState();renderMapItems(item.id);renderMapChecks();
+    announce(`${MAP_TYPES[item.type].label} added to the map.`);
   });
-  let drag=null;
   svg.addEventListener("pointerdown",ev=>{
-    const g=ev.target.closest(".map-item");if(!g)return;
-    ev.preventDefault();const item=state.map.items.find(x=>x.id===g.dataset.id);if(!item)return;
-    state.map.selectedId=item.id;const pt=svgPoint(svg,ev.clientX,ev.clientY);drag={item,dx:pt.x-item.x,dy:pt.y-item.y};
+    const group=ev.target.closest(".map-item");if(!group)return;
+    ev.preventDefault();
+    const item=state.map.items.find(entry=>entry.id===group.dataset.id);if(!item)return;
+    state.map.selectedId=item.id;
+    const pt=svgPoint(svg,ev.clientX,ev.clientY);
+    drag={id:item.id,pointerId:ev.pointerId,dx:pt.x-item.x,dy:pt.y-item.y,startX:pt.x,startY:pt.y,moved:false};
     try{svg.setPointerCapture(ev.pointerId);}catch(e){}
-    renderMapItems();
+    renderMapItems(item.id);
   });
   svg.addEventListener("pointermove",ev=>{
-    if(!drag)return;const pt=svgPoint(svg,ev.clientX,ev.clientY);drag.item.x=clamp(pt.x-drag.dx,55,845);drag.item.y=clamp(pt.y-drag.dy,65,475);renderMapItems();
+    if(!drag||ev.pointerId!==drag.pointerId)return;
+    const item=state.map.items.find(entry=>entry.id===drag.id);if(!item)return;
+    const pt=svgPoint(svg,ev.clientX,ev.clientY);
+    if(Math.hypot(pt.x-drag.startX,pt.y-drag.startY)>3)drag.moved=true;
+    item.x=pt.x-drag.dx;item.y=pt.y-drag.dy;clampMapItemPosition(item);
+    const node=$(`[data-id="${item.id}"]`,el("mapItemsLayer"));if(node){node.setAttribute("transform",mapTransform(item));node.classList.add("dragging");}
   });
-  const endDrag=()=>{if(drag){drag=null;saveState();renderMapChecks();}};
+  const endDrag=ev=>{
+    if(!drag)return;
+    if(ev&&ev.pointerId!==undefined&&ev.pointerId!==drag.pointerId)return;
+    const id=drag.id;drag=null;
+    suppressBoardClick=true;
+    setTimeout(()=>{suppressBoardClick=false;},0);
+    saveState();renderMapItems(id);renderMapChecks();
+  };
   svg.addEventListener("pointerup",endDrag);svg.addEventListener("pointercancel",endDrag);
   svg.addEventListener("keydown",ev=>{
-    const g=ev.target.closest(".map-item");if(!g)return;
-    const item=state.map.items.find(x=>x.id===g.dataset.id);if(!item)return;
-    const step=ev.shiftKey?10:3;
-    if(ev.key==="ArrowLeft")item.x-=step;else if(ev.key==="ArrowRight")item.x+=step;else if(ev.key==="ArrowUp")item.y-=step;else if(ev.key==="ArrowDown")item.y+=step;else if(ev.key==="Delete"||ev.key==="Backspace"){state.map.items=state.map.items.filter(x=>x.id!==item.id);}else return;
-    ev.preventDefault();item.x=clamp(item.x,55,845);item.y=clamp(item.y,65,475);saveState();renderMapItems();renderMapChecks();
-  });
-  el("deleteMapItem").addEventListener("click",()=>{
-    if(!state.map.selectedId){showToast("Select a map symbol first.");return;}
-    state.map.items=state.map.items.filter(x=>x.id!==state.map.selectedId);state.map.selectedId=null;saveState();renderMapItems();renderMapChecks();
+    const group=ev.target.closest(".map-item");if(!group)return;
+    const item=state.map.items.find(entry=>entry.id===group.dataset.id);if(!item)return;
+    state.map.selectedId=item.id;
+    const step=ev.shiftKey?12:4;
+    let handled=true;
+    if(ev.key==="ArrowLeft")item.x-=step;
+    else if(ev.key==="ArrowRight")item.x+=step;
+    else if(ev.key==="ArrowUp")item.y-=step;
+    else if(ev.key==="ArrowDown")item.y+=step;
+    else if(ev.key.toLowerCase()==="r"){ev.preventDefault();rotateMapItem(item.id,ev.shiftKey?-90:90);return;}
+    else if(ev.key==="Delete"||ev.key==="Backspace"){ev.preventDefault();deleteSelectedMapItem();return;}
+    else if(ev.key==="Escape"){state.map.selectedId=null;saveState();renderMapItems();return;}
+    else handled=false;
+    if(!handled)return;
+    ev.preventDefault();clampMapItemPosition(item);saveState();renderMapItems(item.id);renderMapChecks();
   });
   el("clearMap").addEventListener("click",()=>{if(confirm("Clear every symbol from this map?")){state.map.items=[];state.map.selectedId=null;saveState();renderMapItems();renderMapChecks();}});
   el("printMap").addEventListener("click",printWorkshopMap);
 }
 function svgPoint(svg,clientX,clientY){
-  const pt=svg.createSVGPoint();pt.x=clientX;pt.y=clientY;return pt.matrixTransform(svg.getScreenCTM().inverse());
+  try{
+    const matrix=svg.getScreenCTM();
+    if(matrix){const pt=svg.createSVGPoint();pt.x=clientX;pt.y=clientY;return pt.matrixTransform(matrix.inverse());}
+  }catch(err){console.warn("SVG coordinate conversion fallback used",err);}
+  const rect=svg.getBoundingClientRect();
+  return {x:(clientX-rect.left)*(900/Math.max(1,rect.width)),y:(clientY-rect.top)*(520/Math.max(1,rect.height))};
 }
 function renderMapQuestion(){
-  if(!mapCurrentQuestion)mapCurrentQuestion=getQuestion(5);
   const area=el("mapQuizArea");if(!area)return;
-  area.innerHTML=`<div class="question-top"><span class="skill-tag">🗺️ ${escapeHTML(mapCurrentQuestion.label)}</span><span class="q-count">${state.map.quizCorrect} of 3 secure</span></div>${mapCurrentQuestion.scenario?`<div class="scenario">${escapeHTML(mapCurrentQuestion.scenario)}</div>`:""}<div class="question-prompt">${escapeHTML(mapCurrentQuestion.prompt)}</div><div class="answers">${mapCurrentQuestion.options.map((o,i)=>`<button class="answer-btn" data-map-answer="${escapeHTML(o)}"><span style="display:inline-block;width:26px;color:var(--blue);font-weight:950">${String.fromCharCode(65+i)}.</span>${escapeHTML(o)}</button>`).join("")}</div><div class="submit-row"><button class="hint-btn" id="mapHint">Need a hint?</button></div><div class="feedback" id="mapFeedback"></div>`;
-  $$('[data-map-answer]').forEach(btn=>btn.addEventListener("click",()=>submitMapAnswer(btn.dataset.mapAnswer,btn)));
-  el("mapHint").addEventListener("click",()=>{const f=el("mapFeedback");f.className="feedback hint show";f.innerHTML=`<strong>Hint:</strong> ${escapeHTML(mapCurrentQuestion.hint)}`;});
-  el("mapQuizMeter").style.width=`${Math.min(100,state.map.quizCorrect/3*100)}%`;el("mapQuizCopy").textContent=`${state.map.quizCorrect} correct`;
-}
-function submitMapAnswer(answer,btn){
-  if(mapQuestionLocked)return;mapQuestionLocked=true;
-  $$('[data-map-answer]').forEach(b=>b.disabled=true);
-  const good=answer===mapCurrentQuestion.correct;btn.classList.add(good?"correct":"wrong");
-  const f=el("mapFeedback");
-  if(good){
-    f.className="feedback good show";f.innerHTML=`<strong>Correct.</strong> ${escapeHTML(mapCurrentQuestion.explanation)}`;playTone("good");
-    state.map.quizCorrect=Math.min(3,state.map.quizCorrect+1);state.xp+=12;saveState();
-    setTimeout(()=>{mapCurrentQuestion=getQuestion(5);mapQuestionLocked=false;renderMapQuestion();checkMapMissionCompletion();},950);
-  }else{
-    f.className="feedback bad show";f.innerHTML=`<strong>Not yet.</strong> ${escapeHTML(mapCurrentQuestion.hint)}<br><span style="font-size:.88rem">A new version of this map skill is coming.</span>`;playTone("bad");
-    const skill=mapCurrentQuestion.skill;state.map.mistakes[skill]=(state.map.mistakes[skill]||0)+1;saveState();
-    setTimeout(()=>{mapCurrentQuestion=getQuestion(5,skill);mapQuestionLocked=false;renderMapQuestion();},1400);
+  const missing=mapMissingEssentials();
+  const meter=el("mapQuizMeter"),copy=el("mapQuizCopy");
+  if(meter)meter.style.width=`${Math.min(100,state.map.quizCorrect/3*100)}%`;
+  if(copy)copy.textContent=`${state.map.quizCorrect} correct`;
+  if(state.progress.map.completed){
+    area.innerHTML=`<div class="map-complete-panel"><div class="map-complete-icon">🗺️✅</div><h3>Workshop Navigator complete</h3><p>Your required safety locations and map questions are secure. Your map remains editable, and it still needs a teacher check against the real room.</p>${missing.length?`<div class="callout" style="text-align:left"><strong>Map changed after completion:</strong> restore ${escapeHTML(missing.map(type=>MAP_TYPES[type].label).join(", "))} before printing or showing the teacher.</div>`:""}<div class="complete-actions">${state.settings.endMission>5?'<button class="primary-btn" id="mapContinue">Continue to Mission 7</button>':'<button class="primary-btn" id="mapDashboardPrimary">View Safety Locker</button>'}<button class="secondary-btn" id="mapDashboard">Open Safety Locker</button></div></div>`;
+    if(el("mapContinue"))el("mapContinue").addEventListener("click",()=>showMission(6));
+    if(el("mapDashboardPrimary"))el("mapDashboardPrimary").addEventListener("click",showDashboard);
+    if(el("mapDashboard"))el("mapDashboard").addEventListener("click",showDashboard);
+    return;
   }
+  if(state.map.quizCorrect>=3){
+    area.innerHTML=`<div class="map-complete-panel"><div class="map-complete-icon">✅</div><h3>Map questions secure</h3><p>You have answered the three navigation questions. Finish placing the required safety locations to unlock the next mission.</p>${missing.length?`<div class="map-missing-list">${missing.map(type=>`<span>${escapeHTML(MAP_TYPES[type].label)}</span>`).join("")}</div>`:""}</div>`;
+    return;
+  }
+  if(!mapCurrentQuestion)mapCurrentQuestion=getQuestion(5);
+  area.innerHTML=`<div class="question-top"><span class="skill-tag">🗺️ ${escapeHTML(mapCurrentQuestion.label)}</span><span class="q-count">${state.map.quizCorrect} of 3 secure</span></div>${mapCurrentQuestion.scenario?`<div class="scenario">${escapeHTML(mapCurrentQuestion.scenario)}</div>`:""}<div class="question-prompt">${escapeHTML(mapCurrentQuestion.prompt)}</div><div class="answers">${mapCurrentQuestion.options.map((option,i)=>`<button class="answer-btn" data-map-answer="${escapeHTML(option)}"><span style="display:inline-block;width:26px;color:var(--blue);font-weight:950">${String.fromCharCode(65+i)}.</span>${escapeHTML(option)}</button>`).join("")}</div><div class="submit-row"><button class="hint-btn" id="mapHint">Need a hint?</button></div><div class="feedback" id="mapFeedback"></div>`;
+  $$('[data-map-answer]').forEach(btn=>btn.addEventListener("click",()=>submitMapAnswer(btn.dataset.mapAnswer,btn)));
+  el("mapHint").addEventListener("click",()=>{const feedback=el("mapFeedback");feedback.className="feedback hint show";feedback.innerHTML=`<strong>Hint:</strong> ${escapeHTML(mapCurrentQuestion.hint)}`;});
+}
+function submitMapAnswer(answer,button){
+  if(mapQuestionLocked||!mapCurrentQuestion)return;mapQuestionLocked=true;
+  $$('[data-map-answer]').forEach(candidate=>candidate.disabled=true);
+  const good=answer===mapCurrentQuestion.correct;if(button)button.classList.add(good?"correct":"wrong");
+  const feedback=el("mapFeedback"),missionAtAnswer=state.currentMission;
+  if(good){
+    if(feedback){feedback.className="feedback good show";feedback.innerHTML=`<strong>Correct.</strong> ${escapeHTML(mapCurrentQuestion.explanation)}`;}playTone("good");
+    state.map.quizCorrect=Math.min(3,state.map.quizCorrect+1);state.xp+=12;saveState();
+    scheduleView(()=>{
+      if(state.currentView!=="mission"||state.currentMission!==5||missionAtAnswer!==5)return;
+      mapQuestionLocked=false;mapCurrentQuestion=null;checkMapMissionCompletion();renderMapQuestion();renderMapCompletionBanner();
+    },950);
+  }else{
+    if(feedback){feedback.className="feedback bad show";feedback.innerHTML=`<strong>Not yet.</strong> ${escapeHTML(mapCurrentQuestion.hint)}<br><span style="font-size:.88rem">A new version of this map skill is coming.</span>`;}playTone("bad");
+    const skill=mapCurrentQuestion.skill;state.map.mistakes[skill]=(state.map.mistakes[skill]||0)+1;saveState();
+    scheduleView(()=>{
+      if(state.currentView!=="mission"||state.currentMission!==5||missionAtAnswer!==5)return;
+      mapCurrentQuestion=getQuestion(5,skill);mapQuestionLocked=false;renderMapQuestion();
+    },1400);
+  }
+}
+function renderMapCompletionBanner(){
+  const banner=el("mapCompletionBanner");if(!banner)return;
+  const missing=mapMissingEssentials();
+  if(state.progress.map.completed){
+    banner.className=`map-completion-banner show${missing.length?" warning":""}`;
+    banner.innerHTML=`<div><strong>${missing.length?"Mission earned — map needs a quick repair":"Mission complete — Workshop Navigator badge earned"}</strong><span>${missing.length?`Restore ${escapeHTML(missing.map(type=>MAP_TYPES[type].label).join(", "))} before the teacher check.`:(state.settings.endMission>5?"The next mission is unlocked. You may keep editing or continue now.":"This is the final mission selected in Teacher Settings.")}</span></div><button class="primary-btn small-btn" id="mapContinueTop">${state.settings.endMission>5?"Continue to Mission 7":"View Safety Locker"}</button>`;
+    el("mapContinueTop").addEventListener("click",()=>state.settings.endMission>5?showMission(6):showDashboard());
+  }else{
+    const placed=MAP_ESSENTIAL.length-missing.length;
+    banner.className="map-completion-banner show warning";
+    banner.innerHTML=`<div><strong>Workshop map progress</strong><span>${placed}/5 required locations placed · ${state.map.quizCorrect}/3 map questions secure</span></div>`;
+  }
+  const badge=el("mapBadgeStatus");if(badge)badge.textContent=state.progress.map.completed?"Badge earned":"Build and check the map";
 }
 function checkMapMissionCompletion(){
-  const essentials=MAP_ESSENTIAL.every(type=>state.map.items.some(i=>i.type===type));
-  const ready=essentials&&state.map.quizCorrect>=3;
+  const ready=mapMissingEssentials().length===0&&state.map.quizCorrect>=3;
   if(ready&&!state.progress.map.completed){
-    state.progress.map.correct=missionRequired(5);completeMission(5);
-    const note=document.querySelector(".map-note");if(note)note.innerHTML='<strong>Mission complete:</strong> the five essential locations are present and the map questions are secure. Show the map to your teacher for confirmation.';
-    renderMissionNav();
+    state.progress.map.correct=missionRequired(5);completeMission(5);renderMissionNav();mapCurrentQuestion=null;mapQuestionLocked=false;
+    const note=document.querySelector(".map-note");if(note)note.innerHTML='<strong>Mission complete:</strong> the five required locations are present and the map questions are secure. Show the map to your teacher for confirmation.';
   }
+  renderMapCompletionBanner();
+  if((state.progress.map.completed||state.map.quizCorrect>=3)&&el("mapQuizArea"))renderMapQuestion();
 }
 function printWorkshopMap(){
   const svg=el("mapBoard");if(!svg)return;
+  const clone=svg.cloneNode(true);
+  clone.querySelectorAll(".map-focus-ring").forEach(node=>node.setAttribute("stroke","transparent"));
+  clone.querySelectorAll(".map-item.selected rect").forEach(node=>{node.setAttribute("stroke","#ffffff");node.setAttribute("stroke-width","3");});
   const w=window.open("","_blank","width=1000,height=750");
   if(!w){showToast("Allow pop-ups to print the map.");return;}
-  w.document.write(`<!DOCTYPE html><html><head><title>Workshop map</title><style>body{font-family:Arial;margin:25px;color:#1f2933}h1{color:#143f63}svg{width:100%;height:auto;border:1px solid #999}.note{margin-top:15px;font-size:14px} @media print{@page{size:A4 landscape;margin:12mm}}</style></head><body><h1>${escapeHTML(state.student.workshop||state.settings.workshopName||"Workshop")} safety map</h1><p>${escapeHTML(formatStudentNames())} · ${escapeHTML(state.student.className)}</p>${svg.outerHTML}<p class="note">Teacher check: confirm the safety locations and evacuation route in the real workshop.</p><script>setTimeout(()=>window.print(),300)<\/script></body></html>`);
+  w.document.write(`<!DOCTYPE html><html><head><title>Workshop map</title><style>body{font-family:Arial;margin:25px;color:#1f2933}h1{color:#143f63}svg{width:100%;height:auto;border:1px solid #999}.note{margin-top:15px;font-size:14px} @media print{@page{size:A4 landscape;margin:12mm}}</style></head><body><h1>${escapeHTML(state.student.workshop||state.settings.workshopName||"Workshop")} safety map</h1><p>${escapeHTML(formatStudentNames())} · ${escapeHTML(state.student.className)}</p>${clone.outerHTML}<p class="note">Teacher check: confirm the safety locations and evacuation route in the real workshop.</p><script>setTimeout(()=>window.print(),300)<\/script></body></html>`);
   w.document.close();
 }
 function ensureHazardRound(force=false){
   if(force||!Array.isArray(state.hazards.round)||state.hazards.round.length!==6){
-    state.hazards.round=shuffle(hazardFacts).slice(0,6).map(h=>h.id);state.hazards.found=[];saveState();
+    if(!Array.isArray(state.hazards.seenRounds))state.hazards.seenRounds=[];
+    const seen=new Set(state.hazards.seenRounds);
+    let round=[],signature="";
+    for(let tries=0;tries<160;tries++){
+      round=shuffle(hazardFacts).slice(0,6).map(h=>h.id);
+      signature=[...round].sort().join("|");
+      if(!seen.has(signature))break;
+    }
+    state.hazards.round=round;
+    state.hazards.found=[];
+    if(signature&&!seen.has(signature)){
+      state.hazards.seenRounds.push(signature);
+    }
+    saveState();
   }
 }
 function hazardGroup(id,found){
@@ -1337,7 +1757,7 @@ function identifyHazard(id){
   el("hazardDetails").innerHTML=`<h4>${escapeHTML(h.name)}</h4><p><strong>What could happen:</strong> ${escapeHTML(h.consequence)}</p><p><strong>Control:</strong> ${escapeHTML(h.control)}</p>`;
   announce(`${h.name}. ${h.consequence} Control: ${h.control}`);
   if(state.hazards.found.length>=6&&!state.progress.hazards.completed){
-    state.progress.hazards.correct=missionRequired(7);completeMission(7);setTimeout(renderHazardMission,700);
+    state.progress.hazards.correct=missionRequired(7);completeMission(7);scheduleView(()=>{if(state.currentView==="mission"&&state.currentMission===7)renderHazardMission();},700);
   }
 }
 const ACK_STATEMENTS=[
@@ -1391,9 +1811,10 @@ function renderFinalCompletion(){
   el("practiseFinal").addEventListener("click",()=>{state.progress.final.correct=0;state.progress.final.completed=false;state.badges.final=false;state.acknowledgement.complete=false;saveState();showMission(9);});
 }
 function showQuickCheck(){
+  beginView();
   state.currentView="quick";setActiveNav("quick");activeMode="quick";currentQuestion=null;questionLocked=false;saveState();
   updatePageTitle("Quick Check","Random safety skills from across the induction");
-  el("mainContent").innerHTML=`<section class="card hero-card"><div class="eyebrow">Mixed safety practice</div><h2>⚡ Quick Check</h2><p>Demonstrate ${state.settings.quickLength} safety skills. A missed skill returns with a new question until it is answered correctly.</p><div class="tip-grid"><div class="tip"><strong>No guessing loop</strong><span>Incorrect questions are replaced rather than left on screen.</span></div><div class="tip"><strong>Same skill</strong><span>The replacement checks the same learning with a different scenario.</span></div><div class="tip"><strong>Best result</strong><span>Your strongest first-attempt result is saved locally.</span></div></div></section><section class="card" style="margin-top:18px;text-align:center"><div style="font-size:4rem">🛡️</div><h2 style="color:var(--navy2);margin:8px 0">Ready for a mixed check?</h2><p style="color:var(--muted);max-width:670px;margin:0 auto 19px">Questions cover responsibilities, values, emergency procedures, safety signs, PPE, workshop rules, hazards and safe decisions.</p><button class="primary-btn" id="beginQuick">Start ${state.settings.quickLength}-skill Quick Check</button>${state.quick.missed?.length?'<button class="secondary-btn" id="practiseMissed" style="margin-left:8px">Practise last missed skills</button>':""}</section>`;
+  el("mainContent").innerHTML=`<section class="card hero-card"><div class="eyebrow">Mixed safety practice</div><h2>⚡ Quick Check</h2><p>Demonstrate ${state.settings.quickLength} safety skills. Questions already shown in this student session will not be repeated.</p><div class="tip-grid"><div class="tip"><strong>No repeated questions</strong><span>Each visible question and scenario is recorded for the whole student session.</span></div><div class="tip"><strong>Same skill, new example</strong><span>A missed skill returns with different wording or a different situation.</span></div><div class="tip"><strong>Best result</strong><span>Your strongest first-attempt result is saved locally.</span></div></div></section><section class="card" style="margin-top:18px;text-align:center"><div style="font-size:4rem">🛡️</div><h2 style="color:var(--navy2);margin:8px 0">Ready for a mixed check?</h2><p style="color:var(--muted);max-width:670px;margin:0 auto 19px">Questions cover responsibilities, values, emergency procedures, safety signs, PPE, workshop rules, hazards and safe decisions.</p><button class="primary-btn" id="beginQuick">Start ${state.settings.quickLength}-skill Quick Check</button>${state.quick.missed?.length?'<button class="secondary-btn" id="practiseMissed" style="margin-left:8px">Practise last missed skills</button>':""}</section>`;
   el("beginQuick").addEventListener("click",()=>startQuickCheck(false));
   if(el("practiseMissed"))el("practiseMissed").addEventListener("click",()=>startQuickCheck(true));
 }
@@ -1420,7 +1841,7 @@ function startQuickCheck(useMissed=false){
 }
 function renderQuickQuestionView(){
   updatePageTitle("Quick Check",`${quickIndex+1} of ${state.quick.target} skills`);
-  el("mainContent").innerHTML=`<section class="quiz-layout"><div class="card question-card" id="questionArea"></div><aside class="side-panel"><div class="meter-card"><h3>Quick Check progress</h3><div class="meter"><div id="quickMeter"></div></div><div class="meter-copy"><span id="quickCopy"></span><span>${state.quick.target} skills</span></div></div><div class="meter-card"><h3>First-attempt accuracy</h3><div style="font-size:2rem;font-weight:950;color:var(--navy)" id="quickFirstTry">${state.quick.firstTry}</div><div style="font-size:.82rem;color:var(--muted)">correct without a replacement</div></div><div class="meter-card rule-card"><strong>Best saved result</strong><br>${state.quick.best||0} first-attempt skills.</div></aside></section>`;
+  el("mainContent").innerHTML=`<section class="quiz-layout"><div class="card question-card" id="questionArea"></div><aside class="side-panel"><div class="meter-card"><h3>Quick Check progress</h3><div class="meter"><div id="quickMeter"></div></div><div class="meter-copy"><span id="quickCopy"></span><span>${state.quick.target} skills</span></div></div><div class="meter-card"><h3>First-attempt accuracy</h3><div style="font-size:2rem;font-weight:950;color:var(--navy)" id="quickFirstTry">${state.quick.firstTry}</div><div style="font-size:.82rem;color:var(--muted)">correct without a replacement</div></div><div class="meter-card rule-card"><strong>Best saved result</strong><br>${state.quick.best||0} first-attempt skills.</div><div class="meter-card rule-card"><strong>Unique-question record</strong><br>${state.questionHistory?.seen?.length||0} different questions shown in this session.</div></aside></section>`;
   renderQuestionCard();updateQuickSide();
 }
 function updateQuickSide(){
@@ -1443,6 +1864,7 @@ function finishQuickCheck(){
   el("quickDashboard").addEventListener("click",showDashboard);
 }
 function showDashboard(){
+  beginView();
   state.currentView="dashboard";setActiveNav("dashboard");saveState();updatePageTitle("Safety Locker","Progress, badges and next steps");
   const complete=MISSIONS.filter(m=>state.progress[m.id]?.completed).length;
   const nextIndex=MISSIONS.findIndex((m,i)=>i>=state.settings.startMission&&i<=state.settings.endMission&&!state.progress[m.id]?.completed);
@@ -1451,6 +1873,7 @@ function showDashboard(){
   el("dashboardQuick").addEventListener("click",showQuickCheck);el("dashboardSummary").addEventListener("click",printSafetySummary);
 }
 function showCertificate(){
+  beginView();
   state.currentView="certificate";setActiveNav("certificate");saveState();updatePageTitle("Workshop Ready Certificate","Completion record");
   if(!state.settings.certificate){
     el("mainContent").innerHTML='<section class="card"><h2 style="color:var(--navy2)">Certificate disabled</h2><p>The certificate has been disabled in Teacher Settings.</p></section>';return;
@@ -1506,12 +1929,12 @@ function startNewSession(){
   const name1=el("student1").value.trim(),name2=el("student2").value.trim();
   if(!name1){showToast("Enter the student's first name.");el("student1").focus();return;}
   if(mode==="pair"&&!name2){showToast("Enter the second student's first name.");el("student2").focus();return;}
-  const keepSettings={...state.settings};state=freshState();state.settings=keepSettings;
+  const keepSettings={...state.settings};resetRuntimeState();state=freshState();state.settings=keepSettings;
   state.student={mode,name1,name2:mode==="pair"?name2:"",className:el("className").value.trim(),teacher:el("teacherName").value.trim(),workshop:el("workshopNameStart").value.trim()||keepSettings.workshopName};
   state.currentMission=keepSettings.startMission;state.currentView="mission";saveState();applySettings();setScreen("appScreen");showMission(state.currentMission);
 }
 function resumeSession(){
-  applySettings();setScreen("appScreen");
+  resetRuntimeState();normaliseState();applySettings();setScreen("appScreen");
   const view=state.currentView;
   if(view==="dashboard")showDashboard();else if(view==="certificate")showCertificate();else if(view==="quick")showQuickCheck();else showMission(clamp(state.currentMission,state.settings.startMission,state.settings.endMission));
 }
@@ -1551,6 +1974,7 @@ function bindStaticEvents(){
 function init(){
   populateSettingsMissionSelects();
   const hasSaved=loadSaved();
+  normaliseState();
   applySettings();setupResumeUI(hasSaved);togglePairField();bindStaticEvents();updateHeader();
 }
 init();
